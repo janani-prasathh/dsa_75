@@ -1,0 +1,83 @@
+238. Product of Array Except Self
+📌 Problem Statement
+Given an integer array nums, return an array answer such that:
+
+​	“At each position i, multiply everything in the array except the element at i, and put that product in the answer array."
+Constraints:
+n == nums.length
+2 <= n <= 10^5
+-30 <= nums[i] <= 30
+The product of any prefix or suffix fits in a 32-bit integer
+No division allowed
+Time: O(n)
+Example:
+Input: nums = [1,2,3,4]
+Output: [24,12,8,6]
+🧠 Intuition
+We want product of all numbers except nums[i].
+Naive idea:
+Total product ÷ nums[i] → not allowed (and fails if nums[i]=0).
+Better idea:
+prefix[i] = product of all elements before i.
+suffix[i] = product of all elements after i.
+Final: answer[i] = prefix[i] * suffix[i].
+⚡ Approach 1: Prefix + Suffix Arrays
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        prefix = [1]*n
+        suffix = [1]*n
+
+        # build prefix
+        for i in range(1, n):
+            prefix[i] = prefix[i-1] * nums[i-1]
+
+        # build suffix
+        for i in range(n-2, -1, -1):
+            suffix[i] = suffix[i+1] * nums[i+1]
+
+        # result
+        return [prefix[i]*suffix[i] for i in range(n)]
+🔎 Dry Run Example
+Input: nums = [1,2,3,4]
+prefix = [1, 1, 2, 6]
+suffix = [24, 12, 4, 1]
+answer = [24, 12, 8, 6]
+Explanation:
+answer[0] = (product before 0) * (product after 0) = 1 * 24 = 24
+answer[1] = 1 * 12 = 12
+answer[2] = 2 * 4 = 8
+answer[3] = 6 * 1 = 6
+⚡ Approach 2: Optimized (O(1) Extra Space)
+We don’t need separate prefix/suffix arrays.
+Use answer array to store prefix products.
+Then multiply by suffix on the fly.
+class Solution:
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        n = len(nums)
+        answer = [1]*n
+
+        # prefix pass
+        for i in range(1, n):
+            answer[i] = answer[i-1] * nums[i-1]
+
+        # suffix pass
+        suffix = 1
+        for i in range(n-1, -1, -1):
+            answer[i] *= suffix
+            suffix *= nums[i]
+
+        return answer
+⏱ Complexity
+Time: O(n)
+Space: O(1) extra (ignoring answer array)
+⚠️ Edge Cases
+Zeros in array:
+If >1 zero → all products = 0
+If exactly 1 zero → only the position with zero gets non-zero product
+Handled automatically by prefix/suffix method.
+🧠 Key Interview Notes
+Division method is easy but disallowed.
+Prefix/suffix trick is the standard O(n) approach.
+Optimized version (O(1) space) is expected in interviews.
+Always dry run small cases (like [2,3], [0,1,2]).
