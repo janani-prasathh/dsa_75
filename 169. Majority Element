@@ -1,0 +1,46 @@
+## prob 1
+
+1. https://leetcode.com/problems/majority-element/
+
+**2. Problem Statement (short)**
+
+Return the element that appears more than ⌊n/2⌋ times. Guaranteed to exist.
+
+**3. Approaches Tried**
+
+- **Brute Force**: O(n²), count each element.
+- **Hash Map**: O(n), count frequencies.
+- **Sorting**: O(n log n), middle element is majority.
+- **Boyer–Moore Voting**: O(n), O(1).
+
+**4. Final Chosen Approach**
+
+Boyer–Moore Voting Algorithm.
+
+**5. Code (Python)**
+
+```python
+class Solution:
+    def majorityElement(self, nums: List[int]) -> int:
+        candidate, count = None, 0
+        for num in nums:
+            if count == 0:
+                candidate = num
+            count += 1 if num == candidate else -1
+        return candidate
+
+```
+
+**6. Dry Run / Example**
+
+Input: `[2,2,1,1,1,2,2]` → Output: `2`
+
+**7. Complexity**
+
+- Time: O(n)
+- Space: O(1)
+
+**8. Notes / Tricks**
+
+- Works only if majority element is guaranteed.
+- Think of it as “canceling out” non-majority elements.
